@@ -1,0 +1,140 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  JOBSEEKER
+  EMPLOYER_ADMIN
+  SUPER_ADMIN
+}
+
+enum RapTier {
+  NONE
+  REFLECT
+  INNOVATE
+  STRETCH
+  ELEVATE
+}
+
+enum EmploymentType {
+  FULL_TIME
+  PART_TIME
+  CONTRACT
+  CASUAL
+}
+
+enum WorkMode {
+  REMOTE
+  HYBRID
+  ON_SITE
+}
+
+enum ListingStatus {
+  PUBLISHED
+  DRAFT
+  CLOSED
+}
+
+enum EmployerStatus {
+  PUBLISHED
+  DRAFT
+}
+
+enum ApplyMethod {
+  EMAIL
+  URL
+}
+
+model User {
+  id             String    @id @default(cuid())
+  name           String
+  email          String    @unique
+  hashedPassword String
+  role           UserRole  @default(JOBSEEKER)
+  bio            String?
+  location       String?
+  emailNotifications Boolean @default(false)
+  employerId     String?
+  employer       Employer? @relation(fields: [employerId], references: [id])
+  savedJobs      SavedJob[]
+  expressionsOfInterest ExpressionOfInterest[]
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
+model Employer {
+  id              String         @id @default(cuid())
+  name            String
+  slug            String         @unique
+  logo            String?
+  sector          String
+  headquarters    String?
+  websiteUrl      String?
+  shortDescription String?
+  fullDescription String?        @db.Text
+  rapTier         RapTier        @default(NONE)
+  videoUrl        String?
+  photoGallery    String[]
+  linkedinUrl     String?
+  facebookUrl     String?
+  instagramUrl    String?
+  xUrl            String?
+  contactName     String?
+  contactEmail    String?
+  status          EmployerStatus @default(DRAFT)
+  jobs            Job[]
+  admins          User[]
+  expressionsOfInterest ExpressionOfInterest[]
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+}
+
+model Job {
+  id              String         @id @default(cuid())
+  title           String
+  slug            String         @unique
+  employerId      String
+  employer        Employer       @relation(fields: [employerId], references: [id], onDelete: Cascade)
+  location        String
+  workMode        WorkMode       @default(ON_SITE)
+  employmentType  EmploymentType @default(FULL_TIME)
+  salaryRange     String?
+  identifiedRole  Boolean        @default(false)
+  description     String         @db.Text
+  applyMethod     ApplyMethod    @default(EMAIL)
+  applyValue      String
+  closingDate     DateTime?
+  status          ListingStatus  @default(DRAFT)
+  savedBy         SavedJob[]
+  expressionsOfInterest ExpressionOfInterest[]
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+}
+
+model SavedJob {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  jobId     String
+  job       Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, jobId])
+}
+
+model ExpressionOfInterest {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  employerId  String
+  employer    Employer @relation(fields: [employerId], references: [id], onDelete: Cascade)
+  jobId       String?
+  job         Job?     @relation(fields: [jobId], references: [id], onDelete: SetNull)
+  message     String   @db.Text
+  createdAt   DateTime @default(now())
+}
