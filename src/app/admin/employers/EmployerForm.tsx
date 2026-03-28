@@ -31,6 +31,10 @@ type Employer = {
   contactEmail: string | null;
   status: string;
   photoGallery: string[];
+  spotlightUrl: string | null;
+  spotlightTitle: string | null;
+  groVerified: boolean;
+  ibmPartner: boolean;
 };
 
 export function EmployerForm({ employer }: { employer?: Employer }) {
@@ -61,6 +65,10 @@ export function EmployerForm({ employer }: { employer?: Employer }) {
       contactName: form.get("contactName") || null,
       contactEmail: form.get("contactEmail") || null,
       status: form.get("status"),
+      spotlightUrl: form.get("spotlightUrl") || null,
+      spotlightTitle: form.get("spotlightTitle") || null,
+      groVerified: form.get("groVerified") === "on",
+      ibmPartner: form.get("ibmPartner") === "on",
     };
 
     try {
@@ -190,6 +198,28 @@ export function EmployerForm({ employer }: { employer?: Employer }) {
             <input name="contactEmail" type="email" defaultValue={employer?.contactEmail || ""} className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-teal focus:outline-none focus:ring-1 focus:ring-teal" />
           </div>
         </div>
+      </div>
+
+      <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6 space-y-4">
+        <h2 className="font-heading text-lg font-semibold text-forest">FNN Spotlight</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-forest mb-1">Spotlight article URL</label>
+            <input name="spotlightUrl" defaultValue={employer?.spotlightUrl || ""} placeholder="https://firstnationsnews.com.au/..." className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-teal focus:outline-none focus:ring-1 focus:ring-teal" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-forest mb-1">Spotlight article title</label>
+            <input name="spotlightTitle" defaultValue={employer?.spotlightTitle || ""} placeholder="Read our story on FNN" className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-teal focus:outline-none focus:ring-1 focus:ring-teal" />
+          </div>
+        </div>
+        <label className="flex items-center gap-2 text-sm font-medium text-forest">
+          <input type="checkbox" name="groVerified" defaultChecked={employer?.groVerified} className="rounded border-gray-300 text-teal focus:ring-teal" />
+          GRO Verified by 15 Times Better
+        </label>
+        <label className="flex items-center gap-2 text-sm font-medium text-forest">
+          <input type="checkbox" name="ibmPartner" defaultChecked={employer?.ibmPartner} className="rounded border-gray-300 text-teal focus:ring-teal" />
+          IBM Founding Technology Partner
+        </label>
       </div>
 
       {error && <p className="text-sm text-red-500">{error}</p>}

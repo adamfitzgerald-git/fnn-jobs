@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { JobCard } from "@/components/jobs/JobCard";
 import { SECTORS, EMPLOYMENT_TYPES, WORK_MODES } from "@/lib/utils";
+import { SalaryBenchmarkWidget } from "@/components/jobs/SalaryBenchmarkWidget";
 
 export const dynamic = "force-dynamic";
 
@@ -66,7 +67,7 @@ export default async function JobsPage({
         select: { name: true, slug: true, logo: true, rapTier: true },
       },
     },
-    orderBy: { createdAt: "desc" },
+    orderBy: [{ featured: "desc" }, { createdAt: "desc" }],
   });
 
   return (
@@ -141,33 +142,43 @@ export default async function JobsPage({
         </div>
       </form>
 
-      <p className="text-sm text-gray-500 mb-4">{jobs.length} {jobs.length === 1 ? "role" : "roles"} found</p>
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <div className="lg:col-span-3">
+          <p className="text-sm text-gray-500 mb-4">{jobs.length} {jobs.length === 1 ? "role" : "roles"} found</p>
 
-      {jobs.length === 0 ? (
-        <div className="text-center py-16">
-          <p className="text-gray-500 text-lg">No jobs match your search.</p>
-          <a href="/jobs" className="text-teal hover:underline mt-2 inline-block">
-            View all listings
-          </a>
+          {jobs.length === 0 ? (
+            <div className="text-center py-16">
+              <p className="text-gray-500 text-lg">No jobs match your search.</p>
+              <a href="/jobs" className="text-teal hover:underline mt-2 inline-block">
+                View all listings
+              </a>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {jobs.map((job) => (
+                <JobCard
+                  key={job.id}
+                  title={job.title}
+                  slug={job.slug}
+                  location={job.location}
+                  workMode={job.workMode}
+                  employmentType={job.employmentType}
+                  salaryRange={job.salaryRange}
+                  identifiedRole={job.identifiedRole}
+                  featured={job.featured}
+                  closingDate={job.closingDate}
+                  employer={job.employer}
+                />
+              ))}
+            </div>
+          )}
         </div>
-      ) : (
-        <div className="space-y-4">
-          {jobs.map((job) => (
-            <JobCard
-              key={job.id}
-              title={job.title}
-              slug={job.slug}
-              location={job.location}
-              workMode={job.workMode}
-              employmentType={job.employmentType}
-              salaryRange={job.salaryRange}
-              identifiedRole={job.identifiedRole}
-              closingDate={job.closingDate}
-              employer={job.employer}
-            />
-          ))}
+        <div className="hidden lg:block">
+          <div className="sticky top-8">
+            <SalaryBenchmarkWidget sector={params.sector} />
+          </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }

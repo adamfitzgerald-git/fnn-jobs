@@ -65,6 +65,30 @@ export function eoiEmailHtml({
   `;
 }
 
+export function jobAlertDigestHtml({ name, jobs }: { name: string; jobs: { title: string; employer: string; location: string; slug: string }[] }): string {
+  const jobRows = jobs.map(j => `
+    <tr>
+      <td style="padding: 12px; border-bottom: 1px solid #eee;">
+        <a href="${process.env.NEXTAUTH_URL}/jobs/${j.slug}" style="color: #1D9E75; font-weight: 600;">${j.title}</a>
+        <br/><span style="color: #666; font-size: 13px;">${j.employer} · ${j.location}</span>
+      </td>
+    </tr>
+  `).join("");
+
+  return `
+    <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto;">
+      <h1 style="color: #1A2420; font-size: 24px;">New Jobs This Week</h1>
+      <p style="color: #555;">Hi ${name}, here are new jobs matching your preferences:</p>
+      <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+        ${jobRows}
+      </table>
+      <p style="color: #555; font-size: 13px;">
+        <a href="${process.env.NEXTAUTH_URL}/dashboard/alerts" style="color: #1D9E75;">Manage your alert preferences</a>
+      </p>
+    </div>
+  `;
+}
+
 export function registrationEmailHtml({ name }: { name: string }) {
   return `
     <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; padding: 20px;">

@@ -5,6 +5,12 @@ import { IdentifiedBadge } from "@/components/ui/IdentifiedBadge";
 import { formatDate, EMPLOYMENT_TYPES, WORK_MODES } from "@/lib/utils";
 import Link from "next/link";
 import { EnquiryForm } from "./EnquiryForm";
+import { MaturityProfile } from "@/components/employers/MaturityProfile";
+import { RapTimeline } from "@/components/employers/RapTimeline";
+import { GroVerifiedSection } from "@/components/employers/GroVerifiedSection";
+import { PledgeList } from "@/components/employers/PledgeList";
+import { EventList } from "@/components/employers/EventList";
+import { TrackPageView } from "@/components/analytics/TrackPageView";
 
 export const dynamic = "force-dynamic";
 
@@ -31,6 +37,10 @@ export default async function EmployerProfilePage({
         where: { status: "PUBLISHED" },
         orderBy: { createdAt: "desc" },
       },
+      maturityDimensions: true,
+      rapProgress: { orderBy: { year: "desc" as const } },
+      commitmentPledges: { orderBy: { dueDate: "asc" as const } },
+      events: { where: { date: { gte: new Date() } }, orderBy: { date: "asc" as const } },
     },
   });
 
@@ -119,6 +129,16 @@ export default async function EmployerProfilePage({
             </div>
           )}
 
+          {/* Maturity Profile */}
+          {employer.maturityDimensions.length > 0 && (
+            <MaturityProfile dimensions={employer.maturityDimensions} />
+          )}
+
+          {/* RAP Progress */}
+          {employer.rapProgress.length > 0 && (
+            <RapTimeline entries={employer.rapProgress} />
+          )}
+
           {/* Video */}
           {employer.videoUrl && (
             <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-8">
@@ -150,6 +170,16 @@ export default async function EmployerProfilePage({
                 ))}
               </div>
             </div>
+          )}
+
+          {/* Commitment Pledges */}
+          {employer.commitmentPledges.length > 0 && (
+            <PledgeList pledges={employer.commitmentPledges} />
+          )}
+
+          {/* Upcoming Events */}
+          {employer.events.length > 0 && (
+            <EventList events={employer.events} />
           )}
 
           {/* Open roles */}
@@ -210,8 +240,25 @@ export default async function EmployerProfilePage({
             )}
             <EnquiryForm employerId={employer.id} employerName={employer.name} />
           </div>
+          <div className="mt-6">
+            <GroVerifiedSection groVerified={employer.groVerified} />
+          </div>
+          {employer.spotlightUrl && (
+            <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6 mt-6">
+              <h2 className="font-heading text-lg font-semibold text-forest mb-3">FNN Spotlight</h2>
+              <a
+                href={employer.spotlightUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-teal hover:underline text-sm font-medium"
+              >
+                {employer.spotlightTitle || "Read our story on FNN"} ↗
+              </a>
+            </div>
+          )}
         </div>
       </div>
+      <TrackPageView employerId={employer.id} />
     </div>
   );
 }

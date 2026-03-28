@@ -78,6 +78,10 @@ export async function PUT(
         ...(data.contactName !== undefined && { contactName: data.contactName }),
         ...(data.contactEmail !== undefined && { contactEmail: data.contactEmail }),
         ...(data.status !== undefined && role === "SUPER_ADMIN" && { status: data.status }),
+        ...(data.spotlightUrl !== undefined && { spotlightUrl: data.spotlightUrl }),
+        ...(data.spotlightTitle !== undefined && { spotlightTitle: data.spotlightTitle }),
+        ...(data.groVerified !== undefined && { groVerified: data.groVerified }),
+        ...(data.ibmPartner !== undefined && { ibmPartner: data.ibmPartner }),
       },
     });
 

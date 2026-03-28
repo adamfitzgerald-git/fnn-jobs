@@ -50,6 +50,29 @@ enum ApplyMethod {
   URL
 }
 
+enum MaturityDimensionType {
+  EMPLOYMENT
+  LEADERSHIP
+  CULTURAL_SAFETY
+  SUPPLIER_DIVERSITY
+  COMMUNITY_ENGAGEMENT
+  RAP_ACCOUNTABILITY
+  MEASUREMENT
+}
+
+enum TargetMetStatus {
+  MET
+  PARTIALLY_MET
+  NOT_MET
+  IN_PROGRESS
+}
+
+enum PledgeStatus {
+  ACTIVE
+  ACHIEVED
+  OVERDUE
+}
+
 model User {
   id             String    @id @default(cuid())
   name           String
@@ -63,6 +86,7 @@ model User {
   employer       Employer? @relation(fields: [employerId], references: [id])
   savedJobs      SavedJob[]
   expressionsOfInterest ExpressionOfInterest[]
+  alertPreference AlertPreference?
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
 }
@@ -87,9 +111,18 @@ model Employer {
   contactName     String?
   contactEmail    String?
   status          EmployerStatus @default(DRAFT)
+  groVerified     Boolean        @default(false)
+  ibmPartner      Boolean        @default(false)
+  spotlightUrl    String?
+  spotlightTitle  String?
   jobs            Job[]
   admins          User[]
   expressionsOfInterest ExpressionOfInterest[]
+  maturityDimensions MaturityDimension[]
+  rapProgress     RapProgress[]
+  commitmentPledges CommitmentPledge[]
+  events          Event[]
+  pageViews       PageView[]
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
 }
@@ -109,9 +142,11 @@ model Job {
   applyMethod     ApplyMethod    @default(EMAIL)
   applyValue      String
   closingDate     DateTime?
+  featured        Boolean        @default(false)
   status          ListingStatus  @default(DRAFT)
   savedBy         SavedJob[]
   expressionsOfInterest ExpressionOfInterest[]
+  pageViews       PageView[]
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
 }
@@ -137,4 +172,87 @@ model ExpressionOfInterest {
   job         Job?     @relation(fields: [jobId], references: [id], onDelete: SetNull)
   message     String   @db.Text
   createdAt   DateTime @default(now())
+}
+
+model MaturityDimension {
+  id          String                @id @default(cuid())
+  employerId  String
+  employer    Employer              @relation(fields: [employerId], references: [id], onDelete: Cascade)
+  dimension   MaturityDimensionType
+  summary     String?               @db.Text
+  initiatives String?               @db.Text
+  evidence    String?               @db.Text
+  status      String?
+  createdAt   DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
+
+  @@unique([employerId, dimension])
+}
+
+model RapProgress {
+  id             String          @id @default(cuid())
+  employerId     String
+  employer       Employer        @relation(fields: [employerId], references: [id], onDelete: Cascade)
+  year           Int
+  targetSet      String?         @db.Text
+  achieved       String?         @db.Text
+  initiatives    String?         @db.Text
+  targetMet      TargetMetStatus @default(IN_PROGRESS)
+  externalLink   String?
+  nextYearTarget String?         @db.Text
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  @@unique([employerId, year])
+}
+
+model CommitmentPledge {
+  id             String       @id @default(cuid())
+  employerId     String
+  employer       Employer     @relation(fields: [employerId], references: [id], onDelete: Cascade)
+  text           String       @db.Text
+  dueDate        DateTime
+  status         PledgeStatus @default(ACTIVE)
+  reminderSentAt DateTime?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+}
+
+model Event {
+  id              String   @id @default(cuid())
+  employerId      String
+  employer        Employer @relation(fields: [employerId], references: [id], onDelete: Cascade)
+  title           String
+  description     String?  @db.Text
+  date            DateTime
+  registrationUrl String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model SalaryBenchmark {
+  id        String @id @default(cuid())
+  sector    String
+  location  String
+  medianMin Int
+  medianMax Int
+}
+
+model PageView {
+  id         String    @id @default(cuid())
+  employerId String?
+  employer   Employer? @relation(fields: [employerId], references: [id], onDelete: Cascade)
+  jobId      String?
+  job        Job?      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  viewedAt   DateTime  @default(now())
+}
+
+model AlertPreference {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sectors   String[]
+  locations String[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

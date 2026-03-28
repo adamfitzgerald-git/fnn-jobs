@@ -147,6 +147,7 @@ export default async function HomePage() {
                   salaryRange={job.salaryRange}
                   identifiedRole={job.identifiedRole}
                   closingDate={job.closingDate}
+                  featured={job.featured}
                   employer={job.employer}
                 />
               ))}

@@ -25,6 +25,7 @@ type Job = {
   employmentType: string;
   salaryRange: string | null;
   identifiedRole: boolean;
+  featured: boolean;
   description: string;
   applyMethod: string;
   applyValue: string;
@@ -59,6 +60,7 @@ export function JobForm({
       employmentType: form.get("employmentType"),
       salaryRange: form.get("salaryRange") || null,
       identifiedRole: form.get("identifiedRole") === "on",
+      featured: form.get("featured") === "on",
       description: form.get("description"),
       applyMethod: form.get("applyMethod"),
       applyValue: form.get("applyValue"),
@@ -155,6 +157,10 @@ export function JobForm({
         <label className="flex items-center gap-2 text-sm font-medium text-forest">
           <input type="checkbox" name="identifiedRole" defaultChecked={job?.identifiedRole} className="rounded border-gray-300 text-amber focus:ring-amber" />
           Identified Role — open to Aboriginal and Torres Strait Islander applicants
+        </label>
+        <label className="flex items-center gap-2 text-sm font-medium text-forest">
+          <input type="checkbox" name="featured" defaultChecked={job?.featured} className="rounded border-gray-300 text-teal focus:ring-teal" />
+          Featured listing — pinned to top of job listings
         </label>
       </div>
 

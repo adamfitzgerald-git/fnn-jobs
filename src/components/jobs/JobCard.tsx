@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { IdentifiedBadge } from "@/components/ui/IdentifiedBadge";
 import { RapBadge } from "@/components/ui/RapBadge";
-import { formatDate, EMPLOYMENT_TYPES, WORK_MODES } from "@/lib/utils";
+import { FeaturedBadge } from "@/components/ui/FeaturedBadge";
+import { formatDate, daysUntilClose, EMPLOYMENT_TYPES, WORK_MODES } from "@/lib/utils";
 import type { RapTier, EmploymentType, WorkMode } from "@prisma/client";
 
 type JobCardProps = {
@@ -12,6 +13,7 @@ type JobCardProps = {
   employmentType: EmploymentType;
   salaryRange: string | null;
   identifiedRole: boolean;
+  featured: boolean;
   closingDate: Date | null;
   employer: {
     name: string;
@@ -29,9 +31,11 @@ export function JobCard({
   employmentType,
   salaryRange,
   identifiedRole,
+  featured,
   closingDate,
   employer,
 }: JobCardProps) {
+  const daysLeft = daysUntilClose(closingDate);
   return (
     <Link
       href={`/jobs/${slug}`}
@@ -64,13 +68,18 @@ export function JobCard({
             )}
           </div>
           <div className="flex flex-wrap items-center gap-2 mt-2">
+            {featured && <FeaturedBadge />}
             {identifiedRole && <IdentifiedBadge />}
             {employer.rapTier !== "NONE" && <RapBadge tier={employer.rapTier} />}
           </div>
         </div>
         {closingDate && (
-          <span className="text-xs text-gray-400 whitespace-nowrap flex-shrink-0">
-            Closes {formatDate(closingDate)}
+          <span className={`text-xs whitespace-nowrap flex-shrink-0 ${daysLeft !== null && daysLeft <= 14 ? "text-amber font-medium" : "text-gray-400"}`}>
+            {daysLeft === 0
+              ? "Closes today"
+              : daysLeft !== null && daysLeft <= 14
+                ? `Closes in ${daysLeft} days`
+                : `Closes ${formatDate(closingDate)}`}
           </span>
         )}
       </div>

@@ -148,7 +148,7 @@ export default async function DashboardPage() {
         </div>
 
         {/* Sidebar — edit profile */}
-        <div>
+        <div className="space-y-6">
           <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6 sticky top-8">
             <h2 className="font-heading text-lg font-semibold text-forest mb-4">
               Your profile
@@ -159,6 +159,14 @@ export default async function DashboardPage() {
               location={user.location || ""}
               emailNotifications={user.emailNotifications}
             />
+          </div>
+
+          <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
+            <h2 className="font-heading text-lg font-semibold text-forest mb-4">Settings</h2>
+            <div className="space-y-2">
+              <a href="/dashboard/alerts" className="block text-sm text-teal hover:underline">Email Job Alerts</a>
+              <a href="/dashboard/data-sovereignty" className="block text-sm text-teal hover:underline">Your Data (Coming Soon)</a>
+            </div>
           </div>
         </div>
       </div>

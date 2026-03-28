@@ -65,6 +65,10 @@ export async function POST(request: Request) {
         contactName: data.contactName || null,
         contactEmail: data.contactEmail || null,
         status: data.status || "DRAFT",
+        spotlightUrl: data.spotlightUrl || null,
+        spotlightTitle: data.spotlightTitle || null,
+        groVerified: data.groVerified || false,
+        ibmPartner: data.ibmPartner || false,
       },
     });
 

@@ -55,6 +55,11 @@ export function Footer() {
           </div>
         </div>
         <div className="border-t border-white/10 mt-8 pt-8 text-sm text-center">
+          {process.env.NEXT_PUBLIC_IBM_PARTNER_ENABLED === "true" && (
+            <p className="text-white/50 mb-2">
+              Founding Technology Partner: <span className="font-semibold text-white/70">IBM</span>
+            </p>
+          )}
           <p>© {new Date().getFullYear()} First Nations News. All rights reserved.</p>
           <p className="mt-1 text-white/40">
             We acknowledge Aboriginal and Torres Strait Islander peoples as the

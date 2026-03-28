@@ -62,6 +62,7 @@ export async function POST(request: Request) {
         employmentType: data.employmentType || "FULL_TIME",
         salaryRange: data.salaryRange || null,
         identifiedRole: data.identifiedRole || false,
+        featured: data.featured || false,
         description: data.description,
         applyMethod: data.applyMethod || "EMAIL",
         applyValue: data.applyValue,

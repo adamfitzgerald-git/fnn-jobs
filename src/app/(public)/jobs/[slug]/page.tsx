@@ -5,6 +5,8 @@ import { IdentifiedBadge } from "@/components/ui/IdentifiedBadge";
 import { formatDate, EMPLOYMENT_TYPES, WORK_MODES, isClosingDatePassed } from "@/lib/utils";
 import Link from "next/link";
 import { SaveJobButton } from "./SaveJobButton";
+import { KnowBeforeYouApply } from "@/components/jobs/KnowBeforeYouApply";
+import { TrackPageView } from "@/components/analytics/TrackPageView";
 
 export const dynamic = "force-dynamic";
 
@@ -30,7 +32,11 @@ export default async function JobDetailPage({
   const job = await prisma.job.findUnique({
     where: { slug, status: "PUBLISHED" },
     include: {
-      employer: true,
+      employer: {
+        include: {
+          maturityDimensions: true,
+        },
+      },
     },
   });
 
@@ -141,6 +147,9 @@ export default async function JobDetailPage({
             </dl>
           </div>
 
+          {/* Know Before You Apply */}
+          <KnowBeforeYouApply dimensions={job.employer.maturityDimensions} rapTier={job.employer.rapTier} />
+
           {/* Apply card */}
           <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
             {closed ? (
@@ -200,6 +209,7 @@ export default async function JobDetailPage({
           </Link>
         </div>
       </div>
+      <TrackPageView employerId={job.employerId} jobId={job.id} />
     </div>
   );
 }

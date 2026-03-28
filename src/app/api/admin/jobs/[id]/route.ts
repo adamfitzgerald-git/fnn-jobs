@@ -63,6 +63,7 @@ export async function PUT(
         ...(data.employmentType !== undefined && { employmentType: data.employmentType }),
         ...(data.salaryRange !== undefined && { salaryRange: data.salaryRange }),
         ...(data.identifiedRole !== undefined && { identifiedRole: data.identifiedRole }),
+        ...(data.featured !== undefined && { featured: data.featured }),
         ...(data.description !== undefined && { description: data.description }),
         ...(data.applyMethod !== undefined && { applyMethod: data.applyMethod }),
         ...(data.applyValue !== undefined && { applyValue: data.applyValue }),

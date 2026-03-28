@@ -417,6 +417,28 @@ async function main() {
   });
   console.log("Created demo jobseeker: demo@example.com");
 
+  // Salary benchmarks
+  await prisma.salaryBenchmark.deleteMany();
+  await prisma.salaryBenchmark.createMany({
+    data: [
+      { sector: "Resources", location: "Perth, WA", medianMin: 95000, medianMax: 130000 },
+      { sector: "Resources", location: "Regional WA", medianMin: 105000, medianMax: 145000 },
+      { sector: "Finance", location: "Sydney, NSW", medianMin: 85000, medianMax: 120000 },
+      { sector: "Finance", location: "Melbourne, VIC", medianMin: 80000, medianMax: 115000 },
+      { sector: "Health", location: "Sydney, NSW", medianMin: 75000, medianMax: 105000 },
+      { sector: "Health", location: "Regional NSW", medianMin: 70000, medianMax: 100000 },
+      { sector: "Government", location: "Canberra, ACT", medianMin: 80000, medianMax: 110000 },
+      { sector: "Government", location: "Sydney, NSW", medianMin: 78000, medianMax: 108000 },
+      { sector: "Construction", location: "Sydney, NSW", medianMin: 85000, medianMax: 120000 },
+      { sector: "Construction", location: "Melbourne, VIC", medianMin: 82000, medianMax: 115000 },
+      { sector: "Education", location: "Sydney, NSW", medianMin: 70000, medianMax: 95000 },
+      { sector: "Education", location: "Melbourne, VIC", medianMin: 68000, medianMax: 92000 },
+      { sector: "Technology", location: "Sydney, NSW", medianMin: 90000, medianMax: 140000 },
+      { sector: "Technology", location: "Melbourne, VIC", medianMin: 85000, medianMax: 130000 },
+    ],
+  });
+  console.log("Created salary benchmarks");
+
   console.log("\n✓ Seed complete!");
   console.log("\nLogin credentials:");
   console.log("  Super Admin:  admin@firstnationsnews.com.au / admin123!");
